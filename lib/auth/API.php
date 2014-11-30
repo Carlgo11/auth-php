@@ -83,4 +83,19 @@ class Login {
         return $password;
     }
 
+    public static function updatePassword($username, $oldpassword, $password) {
+        if (Login::getPassword($username, $oldpassword)) {
+            $options = array('cost' => 12);
+            $salt = Login::generateSalt();
+            $hash = password_hash($password . $salt, PASSWORD_BCRYPT, $options);
+            include 'config.php';
+            $con = mysqli_connect($conf['login-url'], $conf['login-user'], $conf['login-password'], $conf['login-db']) or die("Connection problem.");
+            $query = $con->prepare("UPDATE `" . $conf['login-table'] . "` SET `password`=?,`salt`=? WHERE `username`=?;");
+            $query->bind_param("sss", $hash, $salt, $username);
+            $query->execute();
+            return true;
+        }
+        return false;
+    }
+
 }
