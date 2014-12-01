@@ -18,13 +18,10 @@ class yubikey {
             $id = "1851";
         }
 
-
-
         require_once 'Yubico.php';
         $yubi = new Auth_Yubico($id, $key, $https, $httpsverify);
 
         $auth = $yubi->verify($otp, false);
-
 
         if (PEAR::isError($auth)) {
             // fail
