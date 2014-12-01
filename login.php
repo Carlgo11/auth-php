@@ -2,6 +2,8 @@
 if (isset($_POST['login'])) {
     require 'lib/auth/API.php';
     $output = Login::doLogin($_POST['username'], $_POST['password']);
+    require 'lib/Yubico/Yubikey.php';
+    $yubi = yubikey::verify($_POST['otp']);
 }
 ?>
 <!DOCTYPE html>
@@ -22,9 +24,13 @@ if (isset($_POST['login'])) {
             if (isset($output) && !$output) {
                 echo '<div clasn"s="alert alert-danger" role="alert"><b>Wrong Username or Password!</b><br>Maybe you misspelled something?</div>';
             }
+            if(isset($yubi)){
+                echo $yubi;
+            }
             ?>
             <input type="text" name="username" class="form-control" placeholder="Username" required="" autofocus="" autocomplete="off" style="margin-top: 20px">
             <input type="text" name="password" class="form-control" placeholder="Password" required="" autofocus="" autocomplete="off" style="margin-top: 10px">
+            <input type="text" name="otp" class="form-control" placeholder="OTP" autofocus="" autocomplete="off" style="margin-top: 10px">
             <button type="submit" name="login" style="margin-top: 5px" >Login</button>
         </form>
     </body>
